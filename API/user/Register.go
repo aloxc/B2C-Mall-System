@@ -212,4 +212,3 @@ func (userapi *UserAPi) UserInfoModify(w http.ResponseWriter, r *http.Request) {
 	s := StructureType.Things{"基本信息修改成功"}
 	render.JSON(w, r, s)
 }
-
