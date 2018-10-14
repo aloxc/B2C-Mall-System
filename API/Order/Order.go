@@ -1,12 +1,12 @@
-package Order
+package order
 
 import (
 	"database/sql"
 	"github.com/go-chi/render"
 	"github.com/jinzhu/gorm"
 	"net/http"
-		"xiangmu/B2C/DataConn"
-	"xiangmu/B2C/StructureType"
+	"xiangmu/B2C/data_conn"
+	"xiangmu/B2C/structure_type"
 )
 
 type BrowsingOrderAPi struct {
@@ -20,52 +20,51 @@ func Make_db(db *gorm.DB) *BrowsingOrderAPi {
 
 func (browsingorderapi *BrowsingOrderAPi) BrowsingOrder(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	username_1 := r.Form["Username"][0]
-	id_1 := r.Form["Id"][0]
+	userName := r.Form["userName"][0]
+	id := r.Form["id"][0]
 
-	var s StructureType.SalesitemTotal
-	var tem StructureType.Salesorder
+	var s structure_type.SalesItemTotal
+	var tem structure_type.SalesOrder
 	var rows *sql.Rows
 	var err error
 
-	a:="Id, Username, Pruductid, Pruductname, Unitprice, Pcount, Totalprice, Address, Ordertime, Status"
+	a := "Id, UserName, PruductId, PruductName, UnitPrice, PCount, TotalPrice, Address, OrderTime, Status"
 	//管理员查询某会员所有订单或者会员查询自己所有订单
-	if username_1 != "" && id_1 == "" {
-		rows, err = browsingorderapi.db.Model(&DataConn.Salesorder{}).Where("Username=?", username_1).Select(a).Rows()
+	if userName != "" && id == "" {
+		rows, err = browsingorderapi.db.Model(&data_conn.SalesOrder{}).Where("UserName=?", userName).Select(a).Rows()
 		if err != nil {
 			return
 		}
 	}
 	//管理员查询某订单或者会员查询自己的某订单
-	if username_1 == "" && id_1 != "" {
-		rows, err = browsingorderapi.db.Model(&DataConn.Salesorder{}).Where("Id=?", id_1).Select(a).Rows()
+	if userName == "" && id != "" {
+		rows, err = browsingorderapi.db.Model(&data_conn.SalesOrder{}).Where("Id=?", id).Select(a).Rows()
 		if err != nil {
 			return
 		}
 	}
 	//管理员查询某会员的某订单
-	if username_1 != "" && id_1 != "" {
-		rows, err = browsingorderapi.db.Model(&DataConn.Salesorder{}).Where("Username=? and Id=?", username_1, id_1).Select(a).Rows()
+	if userName != "" && id != "" {
+		rows, err = browsingorderapi.db.Model(&data_conn.SalesOrder{}).Where("UserName=? and Id=?", userName, id).Select(a).Rows()
 		if err != nil {
 			return
 		}
 	}
 	//管理员查询全部订单
-	if username_1 == "" && id_1 == "" {
-		rows, err = browsingorderapi.db.Model(&DataConn.Salesorder{}).Select(a).Rows()
+	if userName == "" && id == "" {
+		rows, err = browsingorderapi.db.Model(&data_conn.SalesOrder{}).Select(a).Rows()
 		if err != nil {
 			return
 		}
 	}
 
 	for rows.Next() {
-		err = rows.Scan(&tem.Id, &tem.Username, &tem.Pruductid, &tem.Pruductname, &tem.Unitprice,
-			&tem.Pcount, &tem.Totalprice, &tem.Address, &tem.Ordertime, &tem.Status)
+		err = rows.Scan(&tem.Id, &tem.UserName, &tem.PruductId, &tem.PruductName, &tem.UnitPrice,
+			&tem.PCount, &tem.TotalPrice, &tem.Address, &tem.OrderTime, &tem.Status)
 		if err != nil {
 			return
 		}
-		s.SalesitemList = append(s.SalesitemList, tem)
+		s.SalesItemList = append(s.SalesItemList, tem)
 	}
 	render.JSON(w, r, s)
 }
-

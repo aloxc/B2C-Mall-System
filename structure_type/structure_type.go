@@ -1,25 +1,26 @@
-package StructureType
+package structure_type
 
 import "time"
 
 type Things struct {
-	Thing string `json:"err_1"`
+	Thing string `json:"thing"`
+	IsSuccess  bool  `json:"isSuccess "`
 }
 
 type UserRequest struct {
 	Id        int
 	Number    string
 	Password  string
-	Username  string
+	UserName  string
 	Tel       string
 	Address   string
 	Grade     string
-	Totalcost float64
+	TotalCost float64
 }
 
 type Member struct {
 	Number   string
-	Username string
+	UserName string
 	Tel      string
 	Address  string
 	Grade    string
@@ -41,9 +42,9 @@ type Pruduct struct {
 	Id           int
 	Name         string
 	Descr        string
-	Normalprice  string
-	Memberprice  string
-	Uppercabinet string
+	NormalPrice  string
+	MemberPrice  string
+	UpperCabinet string
 	Pdate        time.Time
 	Category     string
 }
@@ -52,18 +53,18 @@ type PruductTotal struct {
 	PruductList []Pruduct
 }
 
-type Salesorder struct {
+type SalesOrder struct {
 	Id          int
-	Username    string
-	Pruductid   string
-	Pruductname string
-	Unitprice   string
-	Pcount      int
-	Totalprice  string
+	UserName    string
+	PruductId   string
+	PruductName string
+	UnitPrice   string
+	PCount      int
+	TotalPrice  string
 	Address     string
-	Ordertime   time.Time
+	OrderTime   time.Time
 	Status      int
 }
-type SalesitemTotal struct {
-	SalesitemList []Salesorder
+type SalesItemTotal struct {
+	SalesItemList []SalesOrder
 }

@@ -1,4 +1,4 @@
-package Shopping
+package shopping
 
 import (
 		"github.com/go-chi/render"
@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"strconv"
 	"time"
-	"xiangmu/B2C/DataConn"
-	"xiangmu/B2C/StructureType"
-	)
+	"xiangmu/B2C/data_conn"
+	"xiangmu/B2C/structure_type"
+)
 
 type ShoppingAPi struct {
 	db *gorm.DB
@@ -21,11 +21,10 @@ func Make_db(db *gorm.DB) *ShoppingAPi {
 
 func (shopping *ShoppingAPi) PlaceOrder(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	id := r.Form["Id"][0]
-	username := r.Form["Username"][0]
-	count := r.Form["Count"][0]
-	var grade, address string
-	var name, normalprice, memberprice string
+	id := r.Form["id"][0]
+	userName := r.Form["userName"][0]
+	count := r.Form["count"][0]
+	var grade, address, name, normalPrice, memberPrice  string
 
 	Count, err := strconv.Atoi(count)
 	if err != nil {
@@ -33,7 +32,7 @@ func (shopping *ShoppingAPi) PlaceOrder(w http.ResponseWriter, r *http.Request) 
 	}
 
 	//查询用户等级和地址
-	rows, err := shopping.db.Model(&DataConn.User{}).Where("Username=?", username).Select("Address,Grade").Rows()
+	rows, err := shopping.db.Model(&data_conn.User{}).Where("UserName=?", userName).Select("Address,Grade").Rows()
 	if err != nil {
 		return
 	}
@@ -45,12 +44,12 @@ func (shopping *ShoppingAPi) PlaceOrder(w http.ResponseWriter, r *http.Request) 
 		}
 	}
 	//查询商品详情
-	rows, err= shopping.db.Model(&DataConn.Pruduct{}).Where("Id=?", id).Select("Name,Normalprice,Memberprice").Rows()
+	rows, err= shopping.db.Model(&data_conn.Pruduct{}).Where("Id=?", id).Select("Name,NormalPrice,MemberPrice").Rows()
 	if err != nil {
 		return
 	}
 	for rows.Next() {
-		err = rows.Scan(&name, &normalprice, &memberprice)
+		err = rows.Scan(&name, &normalPrice, &memberPrice)
 		if err != nil {
 			return
 		}
@@ -58,30 +57,30 @@ func (shopping *ShoppingAPi) PlaceOrder(w http.ResponseWriter, r *http.Request) 
 
 	//增加订单
 	if grade == "普通用户" {
-		price, err := strconv.ParseFloat(normalprice, 64)
+		price, err := strconv.ParseFloat(normalPrice, 64)
 		if err != nil {
 			return
 		}
 		totalprice := strconv.FormatFloat(price*float64(Count), 'E', 3, 64)
-		err = shopping.db.Create(&DataConn.Salesorder{Username: username, Pruductid: id, Pruductname: name, Unitprice: normalprice, Pcount: Count,
-			Totalprice: totalprice, Address: address, Ordertime: time.Now()}).Error
+		err = shopping.db.Create(&data_conn.SalesOrder{UserName: userName, PruductId: id, PruductName: name, UnitPrice: normalPrice, PCount: Count,
+			TotalPrice: totalprice, Address: address, OrderTime: time.Now()}).Error
 		if err != nil {
-			s := StructureType.Things{"购物下单失败"}
+			s := structure_type.Things{"购物下单失败",false}
 			render.JSON(w, r, s)
 			return
 		}
 	}
 
 	if grade == "系统会员" {
-		price, err := strconv.ParseFloat(memberprice, 64)
+		price, err := strconv.ParseFloat(memberPrice, 64)
 		if err != nil {
 			return
 		}
 		totalprice := strconv.FormatFloat(price*float64(Count), 'E', 3, 64)
-		err = shopping.db.Create(&DataConn.Salesorder{Username: username, Pruductid: id, Pruductname: name, Unitprice: memberprice, Pcount: Count,
-			Totalprice: totalprice, Address: address, Ordertime: time.Now()}).Error
+		err = shopping.db.Create(&data_conn.SalesOrder{UserName: userName, PruductId: id, PruductName: name, UnitPrice: normalPrice, PCount: Count,
+			TotalPrice: totalprice, Address: address, OrderTime: time.Now()}).Error
 		if err != nil {
-			s := StructureType.Things{"购物下单失败"}
+			s := structure_type.Things{"购物下单失败",false}
 			render.JSON(w, r, s)
 			return
 		}
@@ -89,77 +88,77 @@ func (shopping *ShoppingAPi) PlaceOrder(w http.ResponseWriter, r *http.Request) 
 
 	if grade == "超级会员" {
 		//将字符串转为浮点数64
-		price, err := strconv.ParseFloat(normalprice, 64)
+		price, err := strconv.ParseFloat(normalPrice, 64)
 		if err != nil {
 			return
 		}
 		//将浮点数64转换成字符串,E代表十进制，2代表小数点位数,并打九折
-		normalprice = strconv.FormatFloat(price*0.9, 'E', 3, 64)
+		normalPrice = strconv.FormatFloat(price*0.9, 'E', 3, 64)
 		totalprice := strconv.FormatFloat(price*float64(Count), 'E', 3, 64)
-		err = shopping.db.Create(&DataConn.Salesorder{Username: username, Pruductid: id, Pruductname: name, Unitprice: normalprice, Pcount: Count,
-			Totalprice: totalprice, Address: address, Ordertime: time.Now()}).Error
+		err = shopping.db.Create(&data_conn.SalesOrder{UserName: userName, PruductId: id, PruductName: name, UnitPrice: normalPrice, PCount: Count,
+			TotalPrice: totalprice, Address: address, OrderTime: time.Now()}).Error
 		if err != nil {
-			s := StructureType.Things{"购物下单失败"}
+			s := structure_type.Things{"购物下单失败",false}
 			render.JSON(w, r, s)
 			return
 		}
 	}
-	s := StructureType.Things{"购物下单成功"}
+	s := structure_type.Things{"购物下单成功",true}
 	render.JSON(w, r, s)
 }
 
 func (shopping *ShoppingAPi) OrderPay(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	id := r.Form["Id"][0]
-	number := r.Form["Number"][0]
-	var totalcost float64
-	var totalprice string
+	id := r.Form["id"][0]
+	number := r.Form["number"][0]
+	var totalCost float64
+	var totalPrice string
 
-	err := shopping.db.Model(&DataConn.Salesorder{}).Where("Id=?", id).Update(&DataConn.Salesorder{Status: 1}).Error
+	err := shopping.db.Model(&data_conn.SalesOrder{}).Where("Id=?", id).Update(&data_conn.SalesOrder{Status: 1}).Error
 	if err != nil {
 		return
 	}
 	//查询用户现有累计消费
-	rows, err := shopping.db.Model(&DataConn.User{}).Where("Number=?", number).Select("Totalcost").Rows()
+	rows, err := shopping.db.Model(&data_conn.User{}).Where("Number=?", number).Select("TotalCost").Rows()
 	if err != nil {
 		return
 	}
 
 	for rows.Next() {
-		err = rows.Scan(&totalcost)
+		err = rows.Scan(&totalCost)
 		if err != nil {
 			return
 		}
 	}
 
 	//查询订单商品总价格
-	rows, err = shopping.db.Model(&DataConn.Salesorder{}).Where("Id=?", id).Select("Totalprice").Rows()
+	rows, err = shopping.db.Model(&data_conn.SalesOrder{}).Where("Id=?", id).Select("TotalPrice").Rows()
 	if err != nil {
 		return
 	}
 
 	for rows.Next() {
-		err = rows.Scan(&totalprice)
+		err = rows.Scan(&totalPrice)
 		if err != nil {
 			return
 		}
 	}
 	//更新个人用户累计消费金额
-	price, err := strconv.ParseFloat(totalprice, 64) //将订单总价转换成float64
+	price, err := strconv.ParseFloat(totalPrice, 64) //将订单总价转换成float64
 	if err != nil {
 		return
 	}
 	//更新累计消费
-	err = shopping.db.Model(&DataConn.User{}).Where("Number=?", number).Update(&DataConn.User{Totalcost: totalcost + price}).Error
+	err = shopping.db.Model(&data_conn.User{}).Where("Number=?", number).Update(&data_conn.User{TotalCost: totalCost + price}).Error
 	if err != nil {
 		return
 	}
 	//更新订单状态
-	err = shopping.db.Model(&DataConn.Salesorder{}).Where("Id=?", id).Update(&DataConn.Salesorder{Status:1}).Error
+	err = shopping.db.Model(&data_conn.SalesOrder{}).Where("Id=?", id).Update(&data_conn.SalesOrder{Status:1}).Error
 	if err != nil {
 		return
 	}
-	s := StructureType.Things{"付款成功"}
+	s := structure_type.Things{"付款成功",true}
 	render.JSON(w, r, s)
 }
 
