@@ -14,7 +14,7 @@ type ShoppingAPi struct {
 	db *gorm.DB
 }
 
-func Make_db(db *gorm.DB) *ShoppingAPi {
+func MakeDb(db *gorm.DB) *ShoppingAPi {
 	DB := &ShoppingAPi{db}
 	return DB
 }

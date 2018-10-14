@@ -13,7 +13,7 @@ type BrowsingOrderAPi struct {
 	db *gorm.DB
 }
 
-func Make_db(db *gorm.DB) *BrowsingOrderAPi {
+func MakeDb(db *gorm.DB) *BrowsingOrderAPi {
 	DB := &BrowsingOrderAPi{db}
 	return DB
 }

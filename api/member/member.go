@@ -12,7 +12,7 @@ type MemberAPi struct {
 	db *gorm.DB
 }
 
-func Make_db(db *gorm.DB) *MemberAPi {
+func MakeDb(db *gorm.DB) *MemberAPi {
 	DB := &MemberAPi{db}
 	return DB
 }

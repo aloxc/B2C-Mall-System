@@ -31,7 +31,7 @@ func main() {
 	defer db.Close()
 
 	//用户个人管理
-	User := user.Make_db(db)
+	User := user.MakeDb(db)
 	r.Route("/user", func(r chi.Router) {
 		r.Post("/register", User.RegisterUser)          //注册用户
 		r.Post("/upgrade", User.UserUpgrade)            //用户升级
@@ -41,14 +41,14 @@ func main() {
 	})
 
 	//会员管理
-	Members := member.Make_db(db)
+	Members := member.MakeDb(db)
 	r.Route("/member", func(r chi.Router) {
-		r.Get("/browse", Member.MemberBro)     //管理者对会员的浏览
+		r.Get("/browse", Members.MemberBro)     //管理者对会员的浏览
 		r.Delete("/delete", Members.MemberDel) //管理者对会员的删除s
 	})
 
 	//产品类别
-	Category := category.Make_db(db)
+	Category := category.MakeDb(db)
 	r.Route("/category", func(r chi.Router) {
 		r.Post("/addition", Category.CategoryAdd) //类别的添加
 		r.Delete("/delete", Category.CategoryDel) //类别的删除
@@ -57,7 +57,7 @@ func main() {
 	})
 
 	//产品管理
-	Pruduct := pruduct.Make_db(db)
+	Pruduct := pruduct.MakeDb(db)
 	r.Route("/pruduct", func(r chi.Router) {
 		r.Post("/addition", Pruduct.PruductAdd)    //新增产品
 		r.Delete("/delete", Pruduct.PruductDel)    //删除产品
@@ -69,18 +69,18 @@ func main() {
 	})
 
 	//用户操作
-	UserSearch := user_action.Make_db(db)
+	UserSearch := user_action.MakeDb(db)
 	r.Get("/pruduct_search", UserSearch.Pruduct) //按类别、价位浏览商品
 
 	//购物
-	Shopping := shopping.Make_db(db)
+	Shopping := shopping.MakeDb(db)
 	r.Route("/shopping", func(r chi.Router) {
 		r.Post("/place_order", Shopping.PlaceOrder) //用户或会员下订单
 		r.Post("/order_pay", Shopping.OrderPay)     //用户支付
 	})
 
 	//订单处理
-	Order := order.Make_db(db)
+	Order := order.MakeDb(db)
 	r.Get("/order/browsing", Order.BrowsingOrder) //管理员和用户对订单的查询
 
 	address := flag.String("address", ":1000", "")

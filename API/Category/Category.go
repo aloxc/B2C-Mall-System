@@ -12,7 +12,7 @@ type CategoryAPi struct {
 	db *gorm.DB
 }
 
-func Make_db(db *gorm.DB) *CategoryAPi {
+func MakeDb(db *gorm.DB) *CategoryAPi {
 	DB := &CategoryAPi{db}
 	return DB
 }

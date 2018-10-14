@@ -14,7 +14,7 @@ type PruductAPi struct {
 	db *gorm.DB
 }
 
-func Make_db(db *gorm.DB) *PruductAPi {
+func MakeDb(db *gorm.DB) *PruductAPi {
 	DB := &PruductAPi{db}
 	return DB
 }

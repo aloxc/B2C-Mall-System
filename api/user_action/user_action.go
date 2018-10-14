@@ -12,7 +12,7 @@ type UserSearchAPi struct {
 	db *gorm.DB
 }
 
-func Make_db(db *gorm.DB) *UserSearchAPi {
+func MakeDb(db *gorm.DB) *UserSearchAPi {
 	DB := &UserSearchAPi{db}
 	return DB
 }
