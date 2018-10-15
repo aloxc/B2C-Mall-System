@@ -43,7 +43,7 @@ func main() {
 	//会员管理
 	Members := member.MakeDb(db)
 	r.Route("/member", func(r chi.Router) {
-		r.Get("/browse", Members.MemberBro)     //管理者对会员的浏览
+		r.Get("/browse", Members.MemberBro)    //管理者对会员的浏览
 		r.Delete("/delete", Members.MemberDel) //管理者对会员的删除s
 	})
 

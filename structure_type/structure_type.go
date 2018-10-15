@@ -3,8 +3,8 @@ package structure_type
 import "time"
 
 type Things struct {
-	Thing string `json:"thing"`
-	IsSuccess  bool  `json:"isSuccess "`
+	Thing     string `json:"thing"`
+	IsSuccess bool   `json:"isSuccess "`
 }
 
 type UserRequest struct {
@@ -27,6 +27,7 @@ type Member struct {
 }
 type MemberTotal struct {
 	MemberList []Member
+	IsSuccess  bool
 }
 
 type Category struct {
@@ -36,6 +37,7 @@ type Category struct {
 }
 type CategoryTotal struct {
 	CategoryList []Category
+	IsSuccess    bool
 }
 
 type Pruduct struct {
@@ -51,6 +53,7 @@ type Pruduct struct {
 
 type PruductTotal struct {
 	PruductList []Pruduct
+	IsSuccess   bool
 }
 
 type SalesOrder struct {
@@ -67,4 +70,5 @@ type SalesOrder struct {
 }
 type SalesItemTotal struct {
 	SalesItemList []SalesOrder
+	IsSuccess     bool
 }

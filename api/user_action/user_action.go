@@ -3,6 +3,7 @@ package user_action
 import (
 	"github.com/go-chi/render"
 	"github.com/jinzhu/gorm"
+	"log"
 	"net/http"
 	"xiangmu/B2C/data_conn"
 	"xiangmu/B2C/structure_type"
@@ -31,12 +32,12 @@ func (usersearchapi *UserSearchAPi) Pruduct(w http.ResponseWriter, r *http.Reque
 	if category != "" {
 		rows, err := usersearchapi.db.Model(&data_conn.Pruduct{}).Where(&data_conn.Pruduct{Category: category, UpperCabinet: "Yes"}).Select("Name,Descr,NormalPrice,MemberPrice").Rows()
 		if err != nil {
-			return
+			log.Printf("err: %s", err)
 		}
 		for rows.Next() {
 			err = rows.Scan(&tem.Name, &tem.Descr, &tem.NormalPrice, &tem.MemberPrice)
 			if err != nil {
-				return
+				log.Printf("err: %s", err)
 			}
 			p.PruductList = append(p.PruductList, tem)
 		}
@@ -45,12 +46,12 @@ func (usersearchapi *UserSearchAPi) Pruduct(w http.ResponseWriter, r *http.Reque
 	if lowPrice != "" && higPrice != "" {
 		rows, err := usersearchapi.db.Model(&data_conn.Pruduct{}).Where("NormalPrice>=? and NormalPrice<=? and UpperCabinet=?", lowPrice, higPrice, "Yes").Select("Name,Descr,NormalPrice,MemberPrice").Rows()
 		if err != nil {
-			return
+			log.Printf("err: %s", err)
 		}
 		for rows.Next() {
 			err = rows.Scan(&tem.Name, &tem.Descr, &tem.NormalPrice, &tem.MemberPrice)
 			if err != nil {
-				return
+				log.Printf("err: %s", err)
 			}
 			p.PruductList = append(p.PruductList, tem)
 		}
@@ -60,12 +61,12 @@ func (usersearchapi *UserSearchAPi) Pruduct(w http.ResponseWriter, r *http.Reque
 	if lowPrice != "" && higPrice == "" {
 		rows, err := usersearchapi.db.Model(&data_conn.Pruduct{}).Where("NormalPrice>=? and UpperCabinet=?", lowPrice, "Yes").Select("Name,Descr,NormalPrice,MemberPrice").Rows()
 		if err != nil {
-			return
+			log.Printf("err: %s", err)
 		}
 		for rows.Next() {
 			err = rows.Scan(&tem.Name, &tem.Descr, &tem.NormalPrice, &tem.MemberPrice)
 			if err != nil {
-				return
+				log.Printf("err: %s", err)
 			}
 			p.PruductList = append(p.PruductList, tem)
 		}
@@ -75,15 +76,16 @@ func (usersearchapi *UserSearchAPi) Pruduct(w http.ResponseWriter, r *http.Reque
 	if lowPrice == "" && higPrice != "" {
 		rows, err := usersearchapi.db.Model(&data_conn.Pruduct{}).Where("NormalPrice<=? and UpperCabinet=?", higPrice, "Yes").Select("Name,Descr,NormalPrice,MemberPrice").Rows()
 		if err != nil {
-			return
+			log.Printf("err: %s", err)
 		}
 		for rows.Next() {
 			err = rows.Scan(&tem.Name, &tem.Descr, &tem.NormalPrice, &tem.MemberPrice)
 			if err != nil {
-				return
+				log.Printf("err: %s", err)
 			}
 			p.PruductList = append(p.PruductList, tem)
 		}
 	}
+	p.IsSuccess = true
 	render.JSON(w, r, p)
 }
