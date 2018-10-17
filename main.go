@@ -2,9 +2,9 @@ package main
 
 import (
 	"flag"
+	"net/http"
 	"github.com/go-chi/chi"
 	"github.com/jinzhu/gorm"
-	"net/http"
 	"xiangmu/B2C/api/category"
 	"xiangmu/B2C/api/member"
 	"xiangmu/B2C/api/order"
@@ -15,7 +15,7 @@ import (
 	"xiangmu/B2C/data_conn"
 )
 
-func DB_Mysql() *gorm.DB {
+func MakeMysqlDB() *gorm.DB {
 	db, err := gorm.Open("mysql", "root:root123@(127.0.0.1:3306)/b2c?charset=utf8&parseTime=True&loc=Local")
 	if err != nil {
 		panic("连接数据库失败")
@@ -27,7 +27,7 @@ func DB_Mysql() *gorm.DB {
 
 func main() {
 	r := chi.NewRouter()
-	db := DB_Mysql()
+	db := MakeMysqlDB()
 	defer db.Close()
 
 	//用户个人管理

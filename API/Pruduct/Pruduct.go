@@ -20,7 +20,7 @@ func MakeDb(db *gorm.DB) *PruductAPi {
 	return DB
 }
 
-func (pruduct *PruductAPi) PruductAdd(w http.ResponseWriter, r *http.Request) {
+func (pruductApi *PruductAPi) PruductAdd(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	name := r.Form["name"][0]
 	descr := r.Form["descr"][0]
@@ -33,7 +33,7 @@ func (pruduct *PruductAPi) PruductAdd(w http.ResponseWriter, r *http.Request) {
 		render.JSON(w, r, s)
 		return
 	}
-	err := pruduct.db.Create(&data_conn.Pruduct{Name: name, Descr: descr, NormalPrice: normalPrice, MemberPrice: memberPrice, Category: category}).Error
+	err := pruductApi.db.Create(&data_conn.Pruduct{Name: name, Descr: descr, NormalPrice: normalPrice, MemberPrice: memberPrice, Category: category}).Error
 	if err != nil {
 		log.Printf("err: %s", err)
 	}
@@ -41,11 +41,11 @@ func (pruduct *PruductAPi) PruductAdd(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, s)
 }
 
-func (pruduct *PruductAPi) PruductDel(w http.ResponseWriter, r *http.Request) {
+func (pruductApi *PruductAPi) PruductDel(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	id := r.Form["id"][0]
 
-	err := pruduct.db.Model(&data_conn.Pruduct{}).Where("Id=?", id).Delete(&data_conn.Pruduct{}).Error
+	err := pruductApi.db.Model(&data_conn.Pruduct{}).Where("Id=?", id).Delete(&data_conn.Pruduct{}).Error
 	if err != nil {
 		log.Printf("err: %s", err)
 	}
@@ -53,11 +53,11 @@ func (pruduct *PruductAPi) PruductDel(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, s)
 }
 
-func (pruduct *PruductAPi) PruductUpp(w http.ResponseWriter, r *http.Request) {
+func (pruductApi *PruductAPi) PruductUpp(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	id := r.Form["id"][0]
 
-	err := pruduct.db.Model(&data_conn.Pruduct{}).Where("Id=?", id).Update(&data_conn.Pruduct{UpperCabinet: "Yes", Pdate: time.Now()}).Error
+	err := pruductApi.db.Model(&data_conn.Pruduct{}).Where("Id=?", id).Update(&data_conn.Pruduct{UpperCabinet: "Yes", Pdate: time.Now()}).Error
 	if err != nil {
 		log.Printf("err: %s", err)
 	}
@@ -65,11 +65,11 @@ func (pruduct *PruductAPi) PruductUpp(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, s)
 }
 
-func (pruduct *PruductAPi) PruductUnd(w http.ResponseWriter, r *http.Request) {
+func (pruductApi *PruductAPi) PruductUnd(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	id := r.Form["id"][0]
 
-	err := pruduct.db.Model(&data_conn.Pruduct{}).Where("Id=?", id).Update(&data_conn.Pruduct{UpperCabinet: "false"}).Error
+	err := pruductApi.db.Model(&data_conn.Pruduct{}).Where("Id=?", id).Update(&data_conn.Pruduct{UpperCabinet: "false"}).Error
 	if err != nil {
 		log.Printf("err: %s", err)
 	}
@@ -78,14 +78,14 @@ func (pruduct *PruductAPi) PruductUnd(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, s)
 }
 
-func (pruduct *PruductAPi) PruductSearch(w http.ResponseWriter, r *http.Request) {
+func (pruductApi *PruductAPi) PruductSearch(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	name := r.Form["name"][0]
 
 	var p structure_type.PruductTotal
 	var tem structure_type.Pruduct
 
-	rows, err := pruduct.db.Model(&data_conn.Pruduct{}).Where("Name=?", name).Select("Name,Descr,NormalPrice,MemberPrice,UpperCabinet,Pdate").Rows()
+	rows, err := pruductApi.db.Model(&data_conn.Pruduct{}).Where("Name=?", name).Select("Name,Descr,NormalPrice,MemberPrice,UpperCabinet,Pdate").Rows()
 	if err != nil {
 		log.Printf("err: %s", err)
 	}
@@ -101,7 +101,7 @@ func (pruduct *PruductAPi) PruductSearch(w http.ResponseWriter, r *http.Request)
 	render.JSON(w, r, p)
 }
 
-func (pruduct *PruductAPi) PruductUp(w http.ResponseWriter, r *http.Request) {
+func (pruductApi *PruductAPi) PruductUp(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	id := r.Form["id"][0]
 	name := r.Form["name"][0]
@@ -111,31 +111,31 @@ func (pruduct *PruductAPi) PruductUp(w http.ResponseWriter, r *http.Request) {
 	category := r.Form["category"][0]
 
 	if name != "" {
-		err := pruduct.db.Model(&data_conn.Pruduct{}).Where("Id=?", id).Update(&data_conn.Pruduct{Name: name}).Error
+		err := pruductApi.db.Model(&data_conn.Pruduct{}).Where("Id=?", id).Update(&data_conn.Pruduct{Name: name}).Error
 		if err != nil {
 			log.Printf("err: %s", err)
 		}
 	}
 	if descr != "" {
-		err := pruduct.db.Model(&data_conn.Pruduct{}).Where("Id=?", id).Update(&data_conn.Pruduct{Descr: descr}).Error
+		err := pruductApi.db.Model(&data_conn.Pruduct{}).Where("Id=?", id).Update(&data_conn.Pruduct{Descr: descr}).Error
 		if err != nil {
 			log.Printf("err: %s", err)
 		}
 	}
 	if memberPrice != "" {
-		err := pruduct.db.Model(&data_conn.Pruduct{}).Where("Id=?", id).Update(&data_conn.Pruduct{MemberPrice: memberPrice}).Error
+		err := pruductApi.db.Model(&data_conn.Pruduct{}).Where("Id=?", id).Update(&data_conn.Pruduct{MemberPrice: memberPrice}).Error
 		if err != nil {
 			log.Printf("err: %s", err)
 		}
 	}
 	if normalPrice != "" {
-		err := pruduct.db.Model(&data_conn.Pruduct{}).Where("Id=?", id).Update(&data_conn.Pruduct{NormalPrice: normalPrice}).Error
+		err := pruductApi.db.Model(&data_conn.Pruduct{}).Where("Id=?", id).Update(&data_conn.Pruduct{NormalPrice: normalPrice}).Error
 		if err != nil {
 			log.Printf("err: %s", err)
 		}
 	}
 	if category != "" {
-		err := pruduct.db.Model(&data_conn.Pruduct{}).Where("Id=?", id).Update(&data_conn.Pruduct{Category: category}).Error
+		err := pruductApi.db.Model(&data_conn.Pruduct{}).Where("Id=?", id).Update(&data_conn.Pruduct{Category: category}).Error
 		if err != nil {
 			log.Printf("err: %s", err)
 		}
@@ -144,11 +144,11 @@ func (pruduct *PruductAPi) PruductUp(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, s)
 }
 
-func (pruduct *PruductAPi) PruductAll(w http.ResponseWriter, r *http.Request) {
+func (pruductApi *PruductAPi) PruductAll(w http.ResponseWriter, r *http.Request) {
 	var p structure_type.PruductTotal
 	var tem structure_type.Pruduct
 
-	rows, err := pruduct.db.Model(&data_conn.Pruduct{}).Select("Name,Descr,NormalPrice,MemberPrice,UpperCabinet,Pdate,Category").Rows()
+	rows, err := pruductApi.db.Model(&data_conn.Pruduct{}).Select("Name,Descr,NormalPrice,MemberPrice,UpperCabinet,Pdate,Category").Rows()
 	if err != nil {
 		log.Printf("err: %s", err)
 	}

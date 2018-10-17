@@ -19,7 +19,7 @@ func MakeDb(db *gorm.DB) *BrowsingOrderAPi {
 	return DB
 }
 
-func (browsingorderapi *BrowsingOrderAPi) BrowsingOrder(w http.ResponseWriter, r *http.Request) {
+func (browsingOrderApi *BrowsingOrderAPi) BrowsingOrder(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	userName := r.Form["userName"][0]
 	id := r.Form["id"][0]
@@ -32,28 +32,28 @@ func (browsingorderapi *BrowsingOrderAPi) BrowsingOrder(w http.ResponseWriter, r
 	a := "Id, UserName, PruductId, PruductName, UnitPrice, PCount, TotalPrice, Address, OrderTime, Status"
 	//管理员查询某会员所有订单或者会员查询自己所有订单
 	if userName != "" && id == "" {
-		rows, err = browsingorderapi.db.Model(&data_conn.SalesOrder{}).Where("UserName=?", userName).Select(a).Rows()
+		rows, err = browsingOrderApi.db.Model(&data_conn.SalesOrder{}).Where("UserName=?", userName).Select(a).Rows()
 		if err != nil {
 			log.Printf("err: %s", err)
 		}
 	}
 	//管理员查询某订单或者会员查询自己的某订单
 	if userName == "" && id != "" {
-		rows, err = browsingorderapi.db.Model(&data_conn.SalesOrder{}).Where("Id=?", id).Select(a).Rows()
+		rows, err = browsingOrderApi.db.Model(&data_conn.SalesOrder{}).Where("Id=?", id).Select(a).Rows()
 		if err != nil {
 			log.Printf("err: %s", err)
 		}
 	}
 	//管理员查询某会员的某订单
 	if userName != "" && id != "" {
-		rows, err = browsingorderapi.db.Model(&data_conn.SalesOrder{}).Where("UserName=? and Id=?", userName, id).Select(a).Rows()
+		rows, err = browsingOrderApi.db.Model(&data_conn.SalesOrder{}).Where("UserName=? and Id=?", userName, id).Select(a).Rows()
 		if err != nil {
 			log.Printf("err: %s", err)
 		}
 	}
 	//管理员查询全部订单
 	if userName == "" && id == "" {
-		rows, err = browsingorderapi.db.Model(&data_conn.SalesOrder{}).Select(a).Rows()
+		rows, err = browsingOrderApi.db.Model(&data_conn.SalesOrder{}).Select(a).Rows()
 		if err != nil {
 			log.Printf("err: %s", err)
 		}

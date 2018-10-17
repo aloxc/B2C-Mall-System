@@ -18,7 +18,7 @@ func MakeDb(db *gorm.DB) *UserSearchAPi {
 	return DB
 }
 
-func (usersearchapi *UserSearchAPi) Pruduct(w http.ResponseWriter, r *http.Request) {
+func (userSearchApi *UserSearchAPi) Pruduct(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseForm()
 	category := r.Form["category"][0]
@@ -30,7 +30,7 @@ func (usersearchapi *UserSearchAPi) Pruduct(w http.ResponseWriter, r *http.Reque
 
 	//按类别浏览或查询
 	if category != "" {
-		rows, err := usersearchapi.db.Model(&data_conn.Pruduct{}).Where(&data_conn.Pruduct{Category: category, UpperCabinet: "Yes"}).Select("Name,Descr,NormalPrice,MemberPrice").Rows()
+		rows, err := userSearchApi.db.Model(&data_conn.Pruduct{}).Where(&data_conn.Pruduct{Category: category, UpperCabinet: "Yes"}).Select("Name,Descr,NormalPrice,MemberPrice").Rows()
 		if err != nil {
 			log.Printf("err: %s", err)
 		}
@@ -44,7 +44,7 @@ func (usersearchapi *UserSearchAPi) Pruduct(w http.ResponseWriter, r *http.Reque
 	}
 	//按最低价和最高价浏览或查询
 	if lowPrice != "" && higPrice != "" {
-		rows, err := usersearchapi.db.Model(&data_conn.Pruduct{}).Where("NormalPrice>=? and NormalPrice<=? and UpperCabinet=?", lowPrice, higPrice, "Yes").Select("Name,Descr,NormalPrice,MemberPrice").Rows()
+		rows, err := userSearchApi.db.Model(&data_conn.Pruduct{}).Where("NormalPrice>=? and NormalPrice<=? and UpperCabinet=?", lowPrice, higPrice, "Yes").Select("Name,Descr,NormalPrice,MemberPrice").Rows()
 		if err != nil {
 			log.Printf("err: %s", err)
 		}
@@ -59,7 +59,7 @@ func (usersearchapi *UserSearchAPi) Pruduct(w http.ResponseWriter, r *http.Reque
 
 	//按最低价浏览或查询
 	if lowPrice != "" && higPrice == "" {
-		rows, err := usersearchapi.db.Model(&data_conn.Pruduct{}).Where("NormalPrice>=? and UpperCabinet=?", lowPrice, "Yes").Select("Name,Descr,NormalPrice,MemberPrice").Rows()
+		rows, err := userSearchApi.db.Model(&data_conn.Pruduct{}).Where("NormalPrice>=? and UpperCabinet=?", lowPrice, "Yes").Select("Name,Descr,NormalPrice,MemberPrice").Rows()
 		if err != nil {
 			log.Printf("err: %s", err)
 		}
@@ -74,7 +74,7 @@ func (usersearchapi *UserSearchAPi) Pruduct(w http.ResponseWriter, r *http.Reque
 
 	//按最高价浏览或查询
 	if lowPrice == "" && higPrice != "" {
-		rows, err := usersearchapi.db.Model(&data_conn.Pruduct{}).Where("NormalPrice<=? and UpperCabinet=?", higPrice, "Yes").Select("Name,Descr,NormalPrice,MemberPrice").Rows()
+		rows, err := userSearchApi.db.Model(&data_conn.Pruduct{}).Where("NormalPrice<=? and UpperCabinet=?", higPrice, "Yes").Select("Name,Descr,NormalPrice,MemberPrice").Rows()
 		if err != nil {
 			log.Printf("err: %s", err)
 		}

@@ -18,7 +18,7 @@ func MakeDb(db *gorm.DB) *CategoryAPi {
 	return DB
 }
 
-func (category *CategoryAPi) CategoryAdd(w http.ResponseWriter, r *http.Request) {
+func (categoryApi *CategoryAPi) CategoryAdd(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	name := r.Form["Name"][0]
 	descr := r.Form["Descr"][0]
@@ -29,7 +29,7 @@ func (category *CategoryAPi) CategoryAdd(w http.ResponseWriter, r *http.Request)
 		render.JSON(w, r, s)
 		return
 	}
-	rows, err := category.db.Model(&data_conn.Category{}).Where("Name=?", name).Select("Id").Rows()
+	rows, err := categoryApi.db.Model(&data_conn.Category{}).Where("Name=?", name).Select("Id").Rows()
 	if err != nil {
 		log.Printf("err: %s", err)
 	}
@@ -47,7 +47,7 @@ func (category *CategoryAPi) CategoryAdd(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	err = category.db.Create(&data_conn.Category{Name: name, Descr: descr}).Error
+	err = categoryApi.db.Create(&data_conn.Category{Name: name, Descr: descr}).Error
 	if err != nil {
 		log.Printf("err: %s", err)
 	}
@@ -55,11 +55,11 @@ func (category *CategoryAPi) CategoryAdd(w http.ResponseWriter, r *http.Request)
 	render.JSON(w, r, s)
 }
 
-func (category *CategoryAPi) CategoryDel(w http.ResponseWriter, r *http.Request) {
+func (categoryApi *CategoryAPi) CategoryDel(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	name := r.Form["name"][0]
 
-	err := category.db.Model(&data_conn.Category{}).Where("Name=?", name).Delete(&data_conn.Category{}).Error
+	err := categoryApi.db.Model(&data_conn.Category{}).Where("Name=?", name).Delete(&data_conn.Category{}).Error
 
 	if err != nil {
 		log.Printf("err: %s", err)
@@ -68,21 +68,21 @@ func (category *CategoryAPi) CategoryDel(w http.ResponseWriter, r *http.Request)
 	render.JSON(w, r, s)
 }
 
-func (category *CategoryAPi) CategoryUp(w http.ResponseWriter, r *http.Request) {
+func (categoryApi *CategoryAPi) CategoryUp(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	name := r.Form["name"][0]
 	newname := r.Form["newName"][0]
 	newdescr := r.Form["newDescr"][0]
 
 	if newdescr != "" {
-		err := category.db.Model(&data_conn.Category{}).Where("Name=?", name).Update(&data_conn.Category{Descr: newdescr}).Error
+		err := categoryApi.db.Model(&data_conn.Category{}).Where("Name=?", name).Update(&data_conn.Category{Descr: newdescr}).Error
 		if err != nil {
 			log.Printf("err: %s", err)
 		}
 	}
 
 	if newname != "" {
-		err := category.db.Model(&data_conn.Category{}).Where("Name=?", name).Update(&data_conn.Category{Name: newname}).Error
+		err := categoryApi.db.Model(&data_conn.Category{}).Where("Name=?", name).Update(&data_conn.Category{Name: newname}).Error
 		if err != nil {
 			log.Printf("err: %s", err)
 		}
@@ -91,10 +91,10 @@ func (category *CategoryAPi) CategoryUp(w http.ResponseWriter, r *http.Request) 
 	render.JSON(w, r, s)
 }
 
-func (category *CategoryAPi) CategoryBro(w http.ResponseWriter, r *http.Request) {
+func (categoryApi *CategoryAPi) CategoryBro(w http.ResponseWriter, r *http.Request) {
 	var c structure_type.CategoryTotal
 	var tem structure_type.Category
-	rows, err := category.db.Model(&data_conn.Category{}).Select("Name,Descr").Rows()
+	rows, err := categoryApi.db.Model(&data_conn.Category{}).Select("Name,Descr").Rows()
 	if err != nil {
 		return
 	}
