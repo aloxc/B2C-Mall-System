@@ -22,7 +22,7 @@ func MakeDb(db *gorm.DB) *UserAPi {
 	return DB
 }
 
-func (userApi *UserAPi) RegisterUser(w http.ResponseWriter, r *http.Request) {
+func (u *UserAPi) RegisterUser(w http.ResponseWriter, r *http.Request) {
 	content, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		log.Printf("err: %s", err)
@@ -45,7 +45,7 @@ func (userApi *UserAPi) RegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rows, err := userApi.db.Model(&data_conn.User{}).Where("Number=?", user.Number).Select("Id").Rows()
+	rows, err := u.db.Model(&data_conn.User{}).Where("Number=?", user.Number).Select("Id").Rows()
 	if err != nil {
 		log.Printf("err: %s", err)
 	}
@@ -69,7 +69,7 @@ func (userApi *UserAPi) RegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = userApi.db.Create(&data_conn.User{Number: user.Number, Password: user.Password, UserName: user.UserName, Tel: user.Tel, Address: user.Address}).Error
+	err = u.db.Create(&data_conn.User{Number: user.Number, Password: user.Password, UserName: user.UserName, Tel: user.Tel, Address: user.Address}).Error
 	fmt.Println(err)
 	if err != nil {
 		s := structure_type.Things{"注册账号失败", false}
@@ -80,7 +80,7 @@ func (userApi *UserAPi) RegisterUser(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, s)
 }
 
-func (userApi *UserAPi) UserUpgrade(w http.ResponseWriter, r *http.Request) {
+func (u *UserAPi) UserUpgrade(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	number := r.Form["number"][0]
 	var grade string
@@ -94,7 +94,7 @@ func (userApi *UserAPi) UserUpgrade(w http.ResponseWriter, r *http.Request) {
 	}()
 	*/
 	//查询用户现有等级和总共消费
-	rows, err := userApi.db.Model(&data_conn.User{}).Where("Number=?", number).Select("Grade，TotalCost").Rows()
+	rows, err := u.db.Model(&data_conn.User{}).Where("Number=?", number).Select("Grade，TotalCost").Rows()
 	if err != nil {
 		log.Printf("err: %s", err)
 	}
@@ -106,7 +106,7 @@ func (userApi *UserAPi) UserUpgrade(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if grade == "普通用户" {
-		err := userApi.db.Model(&data_conn.User{}).Where("Number=?", number).Updates(data_conn.User{Grade: "系统会员"}).Error
+		err := u.db.Model(&data_conn.User{}).Where("Number=?", number).Updates(data_conn.User{Grade: "系统会员"}).Error
 		if err != nil {
 			log.Printf("err: %s", err)
 		}
@@ -118,7 +118,7 @@ func (userApi *UserAPi) UserUpgrade(w http.ResponseWriter, r *http.Request) {
 
 	if grade == "系统会员" {
 		if totalcost >= 10000.00 {
-			err := userApi.db.Model(&data_conn.User{}).Where("Number=?", number).Updates(data_conn.User{Grade: "超级会员"}).Error
+			err := u.db.Model(&data_conn.User{}).Where("Number=?", number).Updates(data_conn.User{Grade: "超级会员"}).Error
 			if err != nil {
 				log.Printf("err: %s", err)
 			}
@@ -131,11 +131,11 @@ func (userApi *UserAPi) UserUpgrade(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (userApi *UserAPi) RegisterAdmini(w http.ResponseWriter, r *http.Request) {
+func (u *UserAPi) RegisterAdmini(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	number := r.Form["number"][0]
 
-	err := userApi.db.Model(&data_conn.User{}).Where("Number=?", number).Updates(data_conn.User{Grade: "管理员"}).Error
+	err := u.db.Model(&data_conn.User{}).Where("Number=?", number).Updates(data_conn.User{Grade: "管理员"}).Error
 	if err != nil {
 		log.Printf("err: %s", err)
 	}
@@ -143,13 +143,13 @@ func (userApi *UserAPi) RegisterAdmini(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, s)
 }
 
-func (userApi *UserAPi) LoginUser(w http.ResponseWriter, r *http.Request) {
+func (u *UserAPi) LoginUser(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	number := r.Form["number"][0]
 	password := r.Form["password"][0]
 	var num, pwd string
 
-	rows, err := userApi.db.Model(&data_conn.User{}).Where("Number=?", number).Select("Number,Password").Rows()
+	rows, err := u.db.Model(&data_conn.User{}).Where("Number=?", number).Select("Number,Password").Rows()
 	if err != nil {
 		log.Printf("err: %s", err)
 	}
@@ -171,7 +171,7 @@ func (userApi *UserAPi) LoginUser(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, s)
 }
 
-func (userApi *UserAPi) UserInfoModify(w http.ResponseWriter, r *http.Request) {
+func (u *UserAPi) UserInfoModify(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	number := r.Form["number"][0]
 	password := r.Form["password"][0]
@@ -179,7 +179,7 @@ func (userApi *UserAPi) UserInfoModify(w http.ResponseWriter, r *http.Request) {
 	newAddress := r.Form["newAddress"][0]
 	newTel := r.Form["newTel"][0]
 
-	rows, err := userApi.db.Model(&data_conn.User{}).Where("Number=?", number).Select("Password,Grade").Rows()
+	rows, err := u.db.Model(&data_conn.User{}).Where("Number=?", number).Select("Password,Grade").Rows()
 	if err != nil {
 		log.Printf("err: %s", err)
 	}
@@ -202,19 +202,19 @@ func (userApi *UserAPi) UserInfoModify(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if newPassword != "" {
-		err = userApi.db.Model(&data_conn.User{}).Where("Number=?", number).Updates(data_conn.User{Password: newPassword}).Error
+		err = u.db.Model(&data_conn.User{}).Where("Number=?", number).Updates(data_conn.User{Password: newPassword}).Error
 		if err != nil {
 			log.Printf("err: %s", err)
 		}
 	}
 	if newAddress != "" {
-		err = userApi.db.Model(&data_conn.User{}).Where("Number=?", number).Updates(data_conn.User{Address: newAddress}).Error
+		err = u.db.Model(&data_conn.User{}).Where("Number=?", number).Updates(data_conn.User{Address: newAddress}).Error
 		if err != nil {
 			log.Printf("err: %s", err)
 		}
 	}
 	if newTel != "" {
-		err = userApi.db.Model(&data_conn.User{}).Where("Number=?", number).Updates(data_conn.User{Tel: newTel}).Error
+		err = u.db.Model(&data_conn.User{}).Where("Number=?", number).Updates(data_conn.User{Tel: newTel}).Error
 		if err != nil {
 			log.Printf("err: %s", err)
 		}

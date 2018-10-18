@@ -18,10 +18,10 @@ func MakeDb(db *gorm.DB) *MemberAPi {
 	return DB
 }
 
-func (memberApi *MemberAPi) MemberBro(w http.ResponseWriter, r *http.Request) {
-	var m structure_type.MemberTotal
+func (m *MemberAPi) MemberBro(w http.ResponseWriter, r *http.Request) {
+	var st structure_type.MemberTotal
 	var tem structure_type.Member
-	rows, err := memberApi.db.Model(&data_conn.User{}).Where("Grade!=?", "普通用户").Select("Number,UserName,Tel,Address,Grade").Rows()
+	rows, err := m.db.Model(&data_conn.User{}).Where("Grade!=?", "普通用户").Select("Number,UserName,Tel,Address,Grade").Rows()
 	if err != nil {
 		log.Printf("err: %s", err)
 	}
@@ -30,17 +30,17 @@ func (memberApi *MemberAPi) MemberBro(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Printf("err: %s", err)
 		}
-		m.MemberList = append(m.MemberList, tem)
+		st.MemberList = append(st.MemberList, tem)
 	}
-	m.IsSuccess = true
-	render.JSON(w, r, m)
+	st.IsSuccess = true
+	render.JSON(w, r, st)
 }
 
-func (memberApi *MemberAPi) MemberDel(w http.ResponseWriter, r *http.Request) {
+func (m *MemberAPi) MemberDel(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	number := r.Form["number"][0]
 
-	err := memberApi.db.Model(&data_conn.User{}).Where("Number=?", number).Delete(&data_conn.User{}).Error
+	err := m.db.Model(&data_conn.User{}).Where("Number=?", number).Delete(&data_conn.User{}).Error
 	if err != nil {
 		log.Printf("err: %s", err)
 	}
